@@ -122,6 +122,9 @@ public class Solution
 
     public bool IsValid(int groups = 2)
     {
+        if (partitioning == null)
+            return false;
+
         int[] vals = new int[groups];
 
         for (int i = 0; i < partitioning.Count(); i++)
