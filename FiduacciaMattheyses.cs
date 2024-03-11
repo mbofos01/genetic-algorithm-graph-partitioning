@@ -27,7 +27,8 @@ namespace genetic_algorithm_graph_partitioning
         public static Solution FiduacciaMattheyses(Solution parent, Graph g, bool debug = false)
         {
             bool KeepGoing = true;
-            int BestScore = 200;
+            int BestScore = Int32.MaxValue;
+            int array_size = 2 * g.GetMaxDegree() + 1;
             Solution BestSolution = parent.Clone();
             List<Vertex> vertices = g.GetVertices();
             do
@@ -40,14 +41,14 @@ namespace genetic_algorithm_graph_partitioning
                     int score = g.ScoreBiPartition(parent);
 
                     int[,] A;
-                    A = new int[vertices.Count, 2 * g.GetMaxDegree() + 1];
-                    int[] A_Counter = new int[2 * g.GetMaxDegree() + 1];
+                    A = new int[vertices.Count, array_size];
+                    int[] A_Counter = new int[array_size];
                     int A_Pointer = 0;
                     int A_Length = 0;
 
                     int[,] B;
-                    B = new int[vertices.Count, 2 * g.GetMaxDegree() + 1];
-                    int[] B_Counter = new int[2 * g.GetMaxDegree() + 1];
+                    B = new int[vertices.Count, array_size];
+                    int[] B_Counter = new int[array_size];
                     int B_Pointer = 0;
                     int B_Length = 0;
                     int non_improvement = 0;
@@ -65,12 +66,13 @@ namespace genetic_algorithm_graph_partitioning
                         // make an hypothetical move and calculate the score
                         child.SwitchPartitioning(v.id - 1);
                         int child_score = g.ScoreBiPartition(child);
+                        child.SetScore(child_score);
 
                         if (child_score <= BestScore)
                             non_improvement++;
 
                         // calculate the index of the array -> score + max_degree
-                        int index = CalculateIndex(score - child_score, 2 * g.GetMaxDegree() + 1);
+                        int index = CalculateIndex(score - child_score, array_size);
 
 
 

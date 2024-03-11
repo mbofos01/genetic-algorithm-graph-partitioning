@@ -86,34 +86,6 @@ public class Graph
     {
         return ScoreBiPartition(sol.GetPartitioning());
     }
-
-
-
-    /// <summary>
-    /// The entry point of the program.
-    /// </summary>
-    /// <param name="args">The command-line arguments.</param>
-    static void Main(string[] args)
-    {
-        // Vertex v1 = new Vertex(1, [2, 5, 6]);
-        // Vertex v2 = new Vertex(2, [1, 3, 5]);
-        // Vertex v3 = new Vertex(3, [2, 4, 5]);
-        // Vertex v4 = new Vertex(4, [3, 5]);
-        // Vertex v5 = new Vertex(5, [1, 2, 3, 4]);
-        // Vertex v6 = new Vertex(6, [1]);
-
-        // List<Vertex> vertices = [v1, v2, v3, v4, v5, v6];
-        Vertex v1 = new Vertex(1, [2,]);
-        Vertex v2 = new Vertex(2, [1, 3]);
-        Vertex v3 = new Vertex(3, [2, 4]);
-        Vertex v4 = new Vertex(4, [3,]);
-
-        List<Vertex> vertices = [v1, v2, v3, v4];
-
-        Graph graph = new Graph(vertices);
-        FiduacciaMattheysesHeuristic.FiduacciaMattheyses(graph, true);
-
-    }
 }
 
 // 1 (0.502987,0.528829)    8    28 102 162 233 360 393 460 500

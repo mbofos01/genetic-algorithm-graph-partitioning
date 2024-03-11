@@ -21,6 +21,7 @@ public class Solution
     {
         partion_count = partions;
         partitioning = new int[size];
+        score = Int32.MaxValue;
         int count_ones;
         int count_zeros;
         do
@@ -48,6 +49,18 @@ public class Solution
     public Solution(int[] partitioning, int partions = 2)
     {
         this.partion_count = partions;
+        score = Int32.MaxValue;
+        this.partitioning = new int[partitioning.Count()];
+        for (int i = 0; i < partitioning.Count(); i++)
+        {
+            this.partitioning[i] = partitioning[i];
+        }
+    }
+
+    public Solution(int[] partitioning, int partions, int score)
+    {
+        this.partion_count = partions;
+        this.score = score;
         this.partitioning = new int[partitioning.Count()];
         for (int i = 0; i < partitioning.Count(); i++)
         {
@@ -95,7 +108,7 @@ public class Solution
 
     public override string ToString()
     {
-        return string.Join(" ", partitioning);
+        return string.Join(" ", partitioning ?? new int[0]);
     }
 
     public Solution Clone()
@@ -103,7 +116,7 @@ public class Solution
         if (partitioning == null)
             return new Solution(0);
 
-        return new Solution(partitioning, partion_count);
+        return new Solution(partitioning, partion_count, score);
     }
 
 
