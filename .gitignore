@@ -1,3 +1,6 @@
 obj/*
 bin/*
 .vscode/*
+*.csproj
+*.sln
+Prac2.pdf
