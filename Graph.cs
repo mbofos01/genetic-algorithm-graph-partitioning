@@ -53,6 +53,7 @@ public class Graph
         {
             Vertex v = vertices[i];
             int part = partition[i];
+
             foreach (int c in v.connections)
             {
                 if (partition[c - 1] != part)
@@ -60,8 +61,37 @@ public class Graph
                     score++;
                 }
             }
+
         }
         return score / 2;
+    }
+
+    public static void Main1(String[] args)
+    {
+        string filePath = "../../../Graph1.txt"; // Update the file path accordingly
+        List<Vertex> vertices = FileReader.ReadGraphFromFile(filePath);
+
+        if (vertices.Count == 0)
+        {
+            Console.WriteLine("No vertices found in the file");
+            return;
+        }
+
+        Graph graph = new Graph(vertices);
+        Solution sol = new Solution([0, 1, 1, 0]);
+        Console.WriteLine(graph.ScoreBiPartition(sol));
+        // sol = new Solution([1, 1, 1, 1]);
+        // Console.WriteLine(graph.ScoreBiPartition(sol));
+        // sol = new Solution([0, 0, 0, 0]);
+        // Console.WriteLine(graph.ScoreBiPartition(sol));
+        // sol = new Solution([1, 0, 1, 0]);
+        // Console.WriteLine(graph.ScoreBiPartition(sol));
+        // sol = new Solution([0, 1, 0, 1]);
+        // Console.WriteLine(graph.ScoreBiPartition(sol));
+        // sol = new Solution([1, 0, 1, 0]);
+        // Console.WriteLine(graph.ScoreBiPartition(sol));
+        // sol = new Solution([1, 1, 0, 1]);
+        // Console.WriteLine(graph.ScoreBiPartition(sol));
     }
 
     public int GetMaxDegree()

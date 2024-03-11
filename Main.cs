@@ -5,14 +5,15 @@ using System.Reflection.Metadata;
 public class Program()
 {
 
-    public static Solution MultistartLocalSearch(Graph graph, int LIMIT = 1000, bool debug = false)
+    public static Solution MultistartLocalSearch(Graph graph, int LIMIT = 1000, bool debug = false, bool deep_debug = false)
     {
         Solution one;
         Solution best = new Solution(graph.GetVertices().Count);
 
         for (int i = 0; i < LIMIT; i++)
         {
-            one = FiduacciaMattheysesHeuristic.FiduacciaMattheyses(graph, false);
+            one = FiduacciaMattheysesHeuristic.FiduacciaMattheyses(graph, debug && deep_debug);
+
             if (one.Score() < best.Score())
             {
                 best = one.Clone();
@@ -26,24 +27,18 @@ public class Program()
     }
     public static void Main(string[] args)
     {
-        // Vertex v1 = new Vertex(1, [2, 5, 6]);
-        // Vertex v2 = new Vertex(2, [1, 3, 5]);
-        // Vertex v3 = new Vertex(3, [2, 4, 5]);
-        // Vertex v4 = new Vertex(4, [3, 5]);
-        // Vertex v5 = new Vertex(5, [1, 2, 3, 4]);
-        // Vertex v6 = new Vertex(6, [1]);
+        string filePath = "../../../Graph5.txt"; // Update the file path accordingly
+        List<Vertex> vertices = FileReader.ReadGraphFromFile(filePath);
 
-        // List<Vertex> vertices = [v1, v2, v3, v4, v5, v6];
-        Vertex v1 = new Vertex(1, [2,]);
-        Vertex v2 = new Vertex(2, [1, 3]);
-        Vertex v3 = new Vertex(3, [2, 4]);
-        Vertex v4 = new Vertex(4, [3,]);
-
-        List<Vertex> vertices = [v1, v2, v3, v4];
+        if (vertices.Count == 0)
+        {
+            Console.WriteLine("No vertices found in the file");
+            return;
+        }
 
         Graph graph = new Graph(vertices);
-
-        Solution solution = MultistartLocalSearch(graph, 1000, true);
+        Console.WriteLine(graph.ToString());
+        Solution solution = MultistartLocalSearch(graph: graph, LIMIT: 1000, debug: true, deep_debug: false);
 
     }
 }

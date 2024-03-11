@@ -27,9 +27,12 @@ namespace genetic_algorithm_graph_partitioning
         public static Solution FiduacciaMattheyses(Solution parent, Graph g, bool debug = false)
         {
             bool KeepGoing = true;
-            int BestScore = Int32.MaxValue;
             int array_size = 2 * g.GetMaxDegree() + 1;
             Solution BestSolution = parent.Clone();
+
+            int BestScore = g.ScoreBiPartition(parent);
+            BestSolution.SetScore(BestScore);
+
             List<Vertex> vertices = g.GetVertices();
             do
             {
@@ -68,7 +71,9 @@ namespace genetic_algorithm_graph_partitioning
                         int child_score = g.ScoreBiPartition(child);
                         child.SetScore(child_score);
 
-                        if (child_score <= BestScore)
+                        // if the score is better or the solution is not valid 
+                        // (meaning that the move is not allowed) we increase the non_improvement counter
+                        if (child_score <= BestScore || !child.IsValid())
                             non_improvement++;
 
                         // calculate the index of the array -> score + max_degree
@@ -134,6 +139,7 @@ namespace genetic_algorithm_graph_partitioning
                     {
                         BestScore = g.ScoreBiPartition(parent);
                         BestSolution = parent.Clone();
+                        BestSolution.SetScore(BestScore);
                     }
 
                 } while (true);
