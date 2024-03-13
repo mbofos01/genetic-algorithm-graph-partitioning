@@ -104,151 +104,159 @@ namespace genetic_algorithm_graph_partitioning
         /// <returns>The best solution found.</returns>
         public static Solution FiduacciaMattheyses(Solution parent, Graph g, bool debug = false)
         {
-            int array_size = 2 * g.GetMaxDegree() + 1;
-            int BestScore = int.MaxValue;
-            Stack<Pair> Changes = new Stack<Pair>();
-
-            parent.SetScore(g.ScoreBiPartition(parent));
             Solution starting_parent = parent.Clone();
-
-            List<Vertex> vertices = g.GetVertices();
-
-            if (debug)
-                Console.WriteLine("Parent: " + parent.ToString() + " with Score: " + g.ScoreBiPartition(parent) + " and Valid: " + parent.IsValid());
-
-            Bucket A = new Bucket(array_size);
-            Bucket B = new Bucket(array_size);
-
-            foreach (Vertex v in vertices)
+            do
             {
-                // copy solution in order to calculate hypothetical score
-                Solution child = parent.Clone();
-                // make an hypothetical move and calculate the score
-                child.SwitchPartitioning(v.id - 1);
-                int child_score = g.ScoreBiPartition(child);
-                child.SetScore(child_score);
-                // Console.WriteLine($"Vertex {v.id} has score {child_score}");
+                int array_size = 2 * g.GetMaxDegree() + 1;
+                int BestScore = int.MaxValue;
+                Stack<Pair> Changes = new Stack<Pair>();
 
-                // calculate the index of the array -> score + max_degree
-                int index = CalculateIndex(parent.Score() - child_score, array_size);
+                parent.SetScore(g.ScoreBiPartition(parent));
+                starting_parent = parent.Clone();
 
-                // Keep in mind that we use the inverse of the current team
-                // 0 is team A and 1 is team B
+                List<Vertex> vertices = g.GetVertices();
 
-                if (child.GetPartitioning()[v.id - 1] == 1)
+                if (debug)
+                    Console.WriteLine("Parent: " + parent.ToString() + " with Score: " + g.ScoreBiPartition(parent) + " and Valid: " + parent.IsValid());
+
+                Bucket A = new Bucket(array_size);
+                Bucket B = new Bucket(array_size);
+
+
+                // Console.WriteLine($"Restarting with {parent.ToString()}");
+                foreach (Vertex v in vertices)
                 {
-                    A.InsertValue(index, v.id);
-                }
-                else
-                {
-                    B.InsertValue(index, v.id);
-                }
-                // arrays are filled with the vertices that can be moved
-            }
+                    // copy solution in order to calculate hypothetical score
+                    Solution child = parent.Clone();
+                    // make an hypothetical move and calculate the score
+                    child.SwitchPartitioning(v.id - 1);
+                    int child_score = g.ScoreBiPartition(child);
+                    child.SetScore(child_score);
+                    // Console.WriteLine($"Vertex {v.id} has score {child_score}");
 
-            // ViewBuckets(A, B);
+                    // calculate the index of the array -> score + max_degree
+                    int index = CalculateIndex(parent.Score() - child_score, array_size);
 
-            while (vertices.Any(v => v.GetFree()))
-            {
-                // string a = Console.ReadLine();
-                if (A.GetLength() == 0 && B.GetLength() == 0)
-                {
-                    break;
-                }
-                else
-                {
-                    Vertex? to_be_locked = null;
-                    int to_be_scored = int.MaxValue;
-                    bool to_be_validated = false;
+                    // Keep in mind that we use the inverse of the current team
+                    // 0 is team A and 1 is team B
 
-                    if (A.GetLength() >= B.GetLength())
+                    if (child.GetPartitioning()[v.id - 1] == 1)
                     {
-                        int max_pointer = A.GetMaxActiveDegree();
-                        int vertex_id_to_move = A.GetValue(max_pointer);
-
-                        parent.SwitchPartitioning(vertex_id_to_move - 1);
-                        to_be_scored = g.ScoreBiPartition(parent);
-                        to_be_validated = parent.IsValid();
-                        parent.SetScore(to_be_scored);
-
-                        to_be_locked = vertices[vertex_id_to_move - 1];
-                        A.RemoveValue(max_pointer, vertex_id_to_move);
-                        UpdateBuckets(to_be_locked, parent, g, B, array_size, starting_parent, vertices);
-
-
+                        A.InsertValue(index, v.id);
                     }
                     else
                     {
-                        int max_pointer = B.GetMaxActiveDegree();
-                        int vertex_id_to_move = B.GetValue(max_pointer);
-
-                        parent.SwitchPartitioning(vertex_id_to_move - 1);
-                        to_be_scored = g.ScoreBiPartition(parent);
-                        to_be_validated = parent.IsValid();
-                        parent.SetScore(to_be_scored);
-
-                        to_be_locked = vertices[vertex_id_to_move - 1];
-                        B.RemoveValue(max_pointer, vertex_id_to_move);
-                        UpdateBuckets(to_be_locked, parent, g, A, array_size, starting_parent, vertices);
-
+                        B.InsertValue(index, v.id);
                     }
+                    // arrays are filled with the vertices that can be moved
+                }
 
-                    // ViewBuckets(A, B);
+                // ViewBuckets(A, B);
 
-                    to_be_locked.free = false;
-                    // Console.WriteLine($"Vertex {to_be_locked.id} scored {to_be_scored}");
-
-                    if (to_be_scored <= BestScore && to_be_validated)
+                while (vertices.Any(v => v.GetFree()))
+                {
+                    // string a = Console.ReadLine();
+                    if (A.GetLength() == 0 && B.GetLength() == 0)
                     {
-                        BestScore = to_be_scored;
+                        break;
                     }
-                    Changes.Push(new Pair(to_be_locked.id, to_be_scored, to_be_validated));
+                    else
+                    {
+                        Vertex? to_be_locked = null;
+                        int to_be_scored = int.MaxValue;
+                        bool to_be_validated = false;
+
+                        if (A.GetLength() >= B.GetLength())
+                        {
+                            int max_pointer = A.GetMaxActiveDegree();
+                            int vertex_id_to_move = A.GetValue(max_pointer);
+
+                            parent.SwitchPartitioning(vertex_id_to_move - 1);
+                            to_be_scored = g.ScoreBiPartition(parent);
+                            to_be_validated = parent.IsValid();
+                            parent.SetScore(to_be_scored);
+
+                            to_be_locked = vertices[vertex_id_to_move - 1];
+                            A.RemoveValue(max_pointer, vertex_id_to_move);
+                            UpdateBuckets(to_be_locked, parent, g, B, array_size, starting_parent, vertices);
+
+
+                        }
+                        else
+                        {
+                            int max_pointer = B.GetMaxActiveDegree();
+                            int vertex_id_to_move = B.GetValue(max_pointer);
+
+                            parent.SwitchPartitioning(vertex_id_to_move - 1);
+                            to_be_scored = g.ScoreBiPartition(parent);
+                            to_be_validated = parent.IsValid();
+                            parent.SetScore(to_be_scored);
+
+                            to_be_locked = vertices[vertex_id_to_move - 1];
+                            B.RemoveValue(max_pointer, vertex_id_to_move);
+                            UpdateBuckets(to_be_locked, parent, g, A, array_size, starting_parent, vertices);
+
+                        }
+
+                        // ViewBuckets(A, B);
+
+                        to_be_locked.free = false;
+                        // Console.WriteLine($"Vertex {to_be_locked.id} scored {to_be_scored}");
+
+                        if (to_be_scored <= BestScore && to_be_validated)
+                        {
+                            BestScore = to_be_scored;
+                        }
+                        Changes.Push(new Pair(to_be_locked.id, to_be_scored, to_be_validated));
+
+                    }
 
                 }
 
-            }
-
-            if (debug)
-            {
-                Console.WriteLine("------------------------------------------------------");
-                Console.WriteLine($"Minimum Value: {BestScore}");
-                Console.WriteLine("------------------------------------------------------");
-                Console.WriteLine("Changes: ");
-                foreach (Pair p in Changes)
-                {
-                    Console.WriteLine($"Vertex: {p.vertex} Score: {p.value} Valid: {p.valid}");
-                }
-                Console.WriteLine("------------------------------------------------------");
-            }
-            Pair? active = Changes.Pop();
-            // Console.WriteLine($"From: {starting_parent.ToString()}");
-            // Console.WriteLine($"Starting: {parent.ToString()}");
-            while (active.value != BestScore || (active.value == BestScore && active.valid == false))
-            {
-
-                // Console.WriteLine($"Pair: {active.vertex} with value {active.value} Valid: {active.valid}");
-                parent.SwitchPartitioning(active.vertex - 1);
-                parent.SetScore(active.value);
                 if (debug)
-                    Console.WriteLine($"Active: {parent.ToString()} Change: {active.vertex} Value: {active.value} Valid: {parent.IsValid()}");
-                try
                 {
-                    active = Changes.Pop();
+                    Console.WriteLine("------------------------------------------------------");
+                    Console.WriteLine($"Minimum Value: {BestScore}");
+                    Console.WriteLine("------------------------------------------------------");
+                    Console.WriteLine("Changes: ");
+                    foreach (Pair p in Changes)
+                    {
+                        Console.WriteLine($"Vertex: {p.vertex} Score: {p.value} Valid: {p.valid}");
+                    }
+                    Console.WriteLine("------------------------------------------------------");
                 }
-                catch (InvalidOperationException e)
+                Pair? active = Changes.Pop();
+                // Console.WriteLine($"From: {starting_parent.ToString()}");
+                // Console.WriteLine($"Starting: {parent.ToString()}");
+                while (active.value != BestScore || (active.value == BestScore && active.valid == false))
                 {
-                    break;
+
+                    // Console.WriteLine($"Pair: {active.vertex} with value {active.value} Valid: {active.valid}");
+                    parent.SwitchPartitioning(active.vertex - 1);
+                    parent.SetScore(active.value);
+                    if (debug)
+                        Console.WriteLine($"Active: {parent.ToString()} Change: {active.vertex} Value: {active.value} Valid: {parent.IsValid()}");
+                    try
+                    {
+                        active = Changes.Pop();
+                    }
+                    catch (InvalidOperationException e)
+                    {
+                        break;
+                    }
                 }
-            }
 
-            foreach (Vertex v in vertices)
-            {
-                v.free = true;
-            }
-            if (parent.IsValid(array_size))
-                throw new ValidationException("The solution is not valid");
+                foreach (Vertex v in vertices)
+                {
+                    v.free = true;
+                }
+                if (parent.IsValid(array_size))
+                    throw new ValidationException("The solution is not valid");
 
-            parent.SetScore(g.ScoreBiPartition(parent));
+                parent.SetScore(g.ScoreBiPartition(parent));
+
+            } while (parent.Score() < starting_parent.Score());
+            
             return parent;
         }
 

@@ -67,8 +67,8 @@ public class Program()
             stopwatch.Stop();
             TimeSpan elapsedTime = stopwatch.Elapsed;
 
-            if (one.Score() < 100)
-                Console.WriteLine(i + "/" + LIMIT + " Score: " + one.Score() + " Time: " + elapsedTime);
+            if (debug)
+                Console.WriteLine((i + 1) + "/" + LIMIT + " Score: " + one.Score() + " Time: " + elapsedTime);
 
             if (one.Score() < best.Score())
             {
@@ -117,7 +117,7 @@ public class Program()
 
         Graph graph = new Graph(vertices);
         Console.WriteLine(graph.ToString());
-        Solution solution = MultistartLocalSearch(graph, LIMIT: 10000, debug: false, deep_debug: false);
+        Solution solution = MultistartLocalSearch(graph, LIMIT: 10000, debug: true, deep_debug: false);
 
     }
 }
