@@ -15,19 +15,38 @@ public class FileReader
                     string line = sr.ReadLine();
                     string[] parts = line.Split(' ');
 
-                    int id = int.Parse(parts[0]);
-                    string[] coordinates = parts[1].Trim('(', ')').Split(',');
-                    double x = double.Parse(coordinates[0]);
-                    double y = double.Parse(coordinates[1]);
-                    int connectedVerticesCount = int.Parse(parts[2]);
-
-                    List<int> connectedVertices = new List<int>();
-                    for (int i = 3; i < parts.Length; i++)
+                    int index = 0;
+                    while (parts[index] == "")
                     {
-                        connectedVertices.Add(int.Parse(parts[i]));
+                        index++;
                     }
 
-                    Vertex vertex = new Vertex(id, x, y, connectedVertices.ToArray());
+                    int id = int.Parse(parts[index]);
+
+                    // Extracting coordinates
+                    string[] coordinates = parts[index + 1].Trim('(', ')').Split(',');
+                    double x = double.Parse(coordinates[0]);
+                    double y = double.Parse(coordinates[1]);
+
+                    index += 2;
+
+                    while (parts[index] == "")
+                    {
+                        index++;
+                    }
+
+                    int connections = int.Parse(parts[index]);
+                    index += 2;
+
+                    // Extracting connected vertices
+                    int[] conns = new int[connections];
+                    for (int i = 0; i < connections; i++)
+                    {
+                        // connectedVertices.Add(int.Parse(parts[index + i]));
+                        conns[i] = int.Parse(parts[index + i]);
+                    }
+
+                    Vertex vertex = new Vertex(id, x, y, conns);
                     vertices.Add(vertex);
                 }
             }

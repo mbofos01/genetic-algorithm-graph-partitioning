@@ -1,6 +1,7 @@
 namespace genetic_algorithm_graph_partitioning;
 using System;
 using System.Reflection.Metadata;
+using System.Diagnostics;
 
 public class Program()
 {
@@ -53,14 +54,21 @@ public class Program()
         return new Solution(child_p);
     }
 
-    public static Solution MultistartLocalSearch(Graph graph, int LIMIT = 1000, bool debug = false, bool deep_debug = false)
+    public static Solution MultistartLocalSearch(Graph graph, int LIMIT = 10000, bool debug = false, bool deep_debug = false)
     {
         Solution one;
         Solution best = new Solution(graph.GetVertices().Count);
 
         for (int i = 0; i < LIMIT; i++)
         {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             one = FiduacciaMattheysesHeuristic.FiduacciaMattheyses(graph, debug && deep_debug);
+            stopwatch.Stop();
+            TimeSpan elapsedTime = stopwatch.Elapsed;
+
+            if (one.Score() < 100)
+                Console.WriteLine(i + "/" + LIMIT + " Score: " + one.Score() + " Time: " + elapsedTime);
 
             if (one.Score() < best.Score())
             {
@@ -98,7 +106,7 @@ public class Program()
 
     public static void Main(string[] args)
     {
-        string filePath = "../../../Graph5.txt"; // Update the file path accordingly
+        string filePath = "../../../Graph500.txt"; // Update the file path accordingly
         List<Vertex> vertices = FileReader.ReadGraphFromFile(filePath);
 
         if (vertices.Count == 0)
@@ -109,7 +117,7 @@ public class Program()
 
         Graph graph = new Graph(vertices);
         Console.WriteLine(graph.ToString());
-        // Solution solution = MultistartLocalSearch(graph: graph, LIMIT: 1000, debug: true, deep_debug: false);
+        Solution solution = MultistartLocalSearch(graph, LIMIT: 10000, debug: false, deep_debug: false);
 
     }
 }
