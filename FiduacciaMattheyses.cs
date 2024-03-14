@@ -75,6 +75,7 @@ namespace genetic_algorithm_graph_partitioning
             int FM_PASS_COUNTER = 1;
 
             Solution working = parent.Clone();
+            Solution best_solution = parent.Clone();
             do
             {
                 int array_size = 2 * g.GetMaxDegree() + 1;
@@ -83,7 +84,7 @@ namespace genetic_algorithm_graph_partitioning
                 int changes = 0;
                 parent.SetScore(active_score);
 
-                Stack<Pair> Changes = new Stack<Pair>();
+                Queue<Pair> Changes = new Queue<Pair>();
 
                 if (debug)
                     Console.WriteLine($"Starting with {parent.ToString()} Score: {BestScore}");
@@ -244,7 +245,8 @@ namespace genetic_algorithm_graph_partitioning
                         {
                             BestScore = active_score;
                         }
-                        Changes.Push(new Pair(to_be_locked.id, active_score, working.IsValid()));
+                        // Changes.Push(new Pair(to_be_locked.id, active_score, working.IsValid()));
+                        Changes.Enqueue(new Pair(to_be_locked.id, to_be_locked.GetGain(), working.IsValid()));
 
                     }
 
@@ -260,21 +262,22 @@ namespace genetic_algorithm_graph_partitioning
                     }
                     Console.WriteLine("------------------------------------------------------");
                 }
-                Pair? active_change = Changes.Pop();
-
-                while (active_change.value != BestScore || (active_change.value == BestScore && active_change.valid == false))
+                if (debug)
+                    Console.WriteLine($"Parent: {parent.ToString()} -- Score:{parent.Score()}");
+                int counter = Changes.Count;
+                Solution parent_clone = parent.Clone();
+                for (int i = 0; i < counter; i++)
                 {
-                    working.SwitchPartitioning(active_change.vertex - 1);
-                    working.SetScore(active_change.value);
+                    Pair active_change = Changes.Dequeue();
+
+                    parent_clone.SwitchPartitioning(active_change.vertex - 1);
                     if (debug)
-                        Console.WriteLine($"Active: {working.ToString()} Change: {active_change.vertex} Value: {active_change.value} Valid: {working.IsValid()}");
-                    try
+                        Console.WriteLine($"Parent: {parent_clone.ToString()} -- Offset: {active_change.value} -- Score:{parent_clone.Score() - active_change.value}  -- Valid: {parent_clone.IsValid()}");
+                    parent_clone.SetScore(parent_clone.Score() - active_change.value);
+
+                    if (parent_clone.IsValid() && best_solution.Score() > parent_clone.Score())
                     {
-                        active_change = Changes.Pop();
-                    }
-                    catch (Exception)
-                    {
-                        break;
+                        best_solution = parent_clone.Clone();
                     }
                 }
 
@@ -285,16 +288,16 @@ namespace genetic_algorithm_graph_partitioning
                     v.next = null;
                     v.previous = null;
                 }
-                if (working.IsValid(array_size))
+                if (best_solution.IsValid(array_size))
                     throw new ValidationException("The solution is not valid");
 
 
-            } while (parent.Score() < working.Score());
+            } while (parent.Score() < best_solution.Score());
 
             FM_PASS_COUNTER++;
-            working.SetFMPasses(FM_PASS_COUNTER);
+            best_solution.SetFMPasses(FM_PASS_COUNTER);
 
-            return working;
+            return best_solution;
         }
 
         /// <summary>

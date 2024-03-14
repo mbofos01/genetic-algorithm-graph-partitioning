@@ -104,6 +104,7 @@ public class Program()
             if (one.Score() < best.Score())
             {
                 best = one.Clone();
+                best.SetScore(one.Score());
             }
 
         }
@@ -156,7 +157,7 @@ public class Program()
 
     public static void Main(string[] args)
     {
-        string filePath = "../../../Graph500.txt"; // Update the file path accordingly
+        string filePath = "../../../Graph5.txt"; // Update the file path accordingly
         List<Vertex> vertices = FileReader.ReadGraphFromFile(filePath);
 
         if (vertices.Count == 0)
@@ -166,8 +167,10 @@ public class Program()
         }
 
         Graph graph = new Graph(vertices);
-        // Solution solution = MultistartLocalSearch(graph, LIMIT: 10000, debug: true, deep_debug: false);
-        Solution solution = IteratedLocalSearch(graph, 100, 80, debug: true, deep_debug: false);
+        Solution solution = MultistartLocalSearch(graph, LIMIT: 10000, debug: true, deep_debug: false);
+        // Solution s = FiduacciaMattheysesHeuristic.FiduacciaMattheyses(new Solution([1, 0, 1, 0, 1, 0]), graph, debug: true);
+        // Console.WriteLine($"Local Best: {s.ToString()} Score: {s.Score()}");
+        // Solution solution = IteratedLocalSearch(graph, 100, 80, debug: true, deep_debug: false);
 
 
     }
