@@ -72,8 +72,8 @@ namespace genetic_algorithm_graph_partitioning
             Random random = new();
             const int SAME_PARTITION_OFFSET = +2;
             const int DIFFERENT_PARTITION_OFFSET = -2;
+            int FM_PASS_COUNTER = 0;
 
-            // Solution starting_parent = parent.Clone();
             Solution working = parent.Clone();
             do
             {
@@ -81,14 +81,14 @@ namespace genetic_algorithm_graph_partitioning
                 int active_score = g.ScoreBiPartition(parent);
                 int BestScore = active_score;
                 int changes = 0;
+                parent.SetScore(active_score);
+
                 Stack<Pair> Changes = new Stack<Pair>();
 
                 if (debug)
                     Console.WriteLine($"Starting with {parent.ToString()} Score: {BestScore}");
 
 
-                parent.SetScore(g.ScoreBiPartition(parent));
-                // starting_parent = parent.Clone();
 
                 List<Vertex> vertices = g.GetVertices();
 
@@ -287,8 +287,11 @@ namespace genetic_algorithm_graph_partitioning
                 if (working.IsValid(array_size))
                     throw new ValidationException("The solution is not valid");
 
-
+                FM_PASS_COUNTER++;
             } while (parent.Score() < working.Score());
+
+            working.SetFMPasses(FM_PASS_COUNTER);
+
             return working;
         }
 

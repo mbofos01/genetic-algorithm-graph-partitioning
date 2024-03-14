@@ -66,7 +66,7 @@ public class Program()
             one = FiduacciaMattheysesHeuristic.FiduacciaMattheyses(graph, debug && deep_debug);
             stopwatch.Stop();
             TimeSpan elapsedTime = stopwatch.Elapsed;
-
+            i += one.GetFMPasses();
             if (debug)
                 Console.WriteLine((i + 1) + "/" + LIMIT + " Score: " + one.Score() + " Time: " + elapsedTime);
 
@@ -116,10 +116,7 @@ public class Program()
         }
 
         Graph graph = new Graph(vertices);
-        Solution solution = MultistartLocalSearch(graph, LIMIT: 100, debug: true, deep_debug: false);
-        // FiduacciaMattheysesHeuristic.FiduacciaMattheyses(new Solution([0, 0, 1, 0, 1, 1]), graph, debug: true);
-        // FiduacciaMattheysesHeuristic.FiduacciaMattheyses(new Solution([0, 1, 0, 0, 1, 1]), graph, debug: true);
-        // FiduacciaMattheysesHeuristic.FiduacciaMattheyses(new Solution([1, 0, 0, 0, 1, 1]), graph, debug: true);
+        Solution solution = MultistartLocalSearch(graph, LIMIT: 10000, debug: true, deep_debug: false);
 
     }
 }
