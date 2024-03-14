@@ -7,10 +7,15 @@ using System;
 /// </summary>
 public class Vertex
 {
+
     /// <summary>
     /// The ID of the vertex.
     /// </summary>
     public int id;
+
+    public Vertex? previous;
+    public Vertex? next;
+    public int gain;
 
     /// <summary>
     /// The x-coordinate of the vertex.
@@ -67,6 +72,36 @@ public class Vertex
     public void SetFree(bool free)
     {
         this.free = free;
+    }
+
+    public void SetGain(int gain)
+    {
+        this.gain = gain;
+    }
+
+    public int GetGain()
+    {
+        return gain;
+    }
+
+    public void SetPrevious(Vertex? previous)
+    {
+        this.previous = previous;
+    }
+
+    public Vertex? GetPrevious()
+    {
+        return previous;
+    }
+
+    public void SetNext(Vertex? next)
+    {
+        this.next = next;
+    }
+
+    public Vertex? GetNext()
+    {
+        return next;
     }
 
 }

@@ -10,6 +10,7 @@ public class Solution
     private int[]? partitioning;
     private int partion_count;
     private int score;
+    private int fm_passes;
     private static Random rnd = new Random();
 
     /// <summary>
@@ -20,6 +21,7 @@ public class Solution
     public Solution(int size, int partions = 2)
     {
         partion_count = partions;
+        fm_passes = 0;
         partitioning = new int[size];
         score = Int32.MaxValue;
         int count_ones;
@@ -49,6 +51,7 @@ public class Solution
     public Solution(int[] partitioning, int partions = 2)
     {
         this.partion_count = partions;
+        fm_passes = 0;
         score = Int32.MaxValue;
         this.partitioning = new int[partitioning.Count()];
         for (int i = 0; i < partitioning.Count(); i++)
@@ -61,6 +64,7 @@ public class Solution
     {
         this.partion_count = partions;
         this.score = score;
+        fm_passes = 0;
         this.partitioning = new int[partitioning.Count()];
         for (int i = 0; i < partitioning.Count(); i++)
         {
@@ -149,5 +153,15 @@ public class Solution
     public void SetScore(int score)
     {
         this.score = score;
+    }
+
+    public void SetFMPasses(int passes)
+    {
+        this.fm_passes = passes;
+    }
+
+    public int GetFMPasses()
+    {
+        return fm_passes;
     }
 }

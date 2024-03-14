@@ -8,15 +8,16 @@ public class FileReader
 
         try
         {
-            using (StreamReader sr = new StreamReader(filePath))
+            using (StreamReader? sr = new StreamReader(filePath))
             {
+
                 while (!sr.EndOfStream)
                 {
-                    string line = sr.ReadLine();
+                    string? line = sr.ReadLine();
                     string[] parts = line.Split(' ');
 
                     int index = 0;
-                    while (parts[index] == "")
+                    while (parts?[index] == "")
                     {
                         index++;
                     }

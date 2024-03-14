@@ -2,11 +2,42 @@ namespace genetic_algorithm_graph_partitioning;
 using System;
 using System.Reflection.Metadata;
 using System.Diagnostics;
+using System.Data;
 
 public class Program()
 {
-    public static Solution Mutate(Solution one, bool debug = false)
+    public static Solution Mutate(Solution one, int how_many, bool debug = false)
     {
+        Random random = new Random();
+        if (how_many % 2 != 0)
+        {
+            throw new Exception("how_many must be even");
+        }
+        bool loop_through = false;
+        do
+        {
+            loop_through = false;
+            List<int> indexes = new List<int>();
+            for (int i = 0; i < how_many; i++)
+            {
+                int index = -1;
+                do
+                {
+                    index = random.Next(0, one.GetPartitioning().Length);
+                } while (indexes.Contains(index));
+                one.SwitchPartitioning(index);
+                indexes.Add(index);
+            }
+            if (one.IsValid() == false)
+            {
+                loop_through = true;
+                for (int i = 0; i < indexes.Count; i++)
+                {
+                    one.SwitchPartitioning(indexes[i]);
+                }
+            }
+        } while (loop_through);
+
         return one;
     }
     public static int HammingDistance(Solution one, Solution two)
@@ -66,9 +97,9 @@ public class Program()
             one = FiduacciaMattheysesHeuristic.FiduacciaMattheyses(graph, debug && deep_debug);
             stopwatch.Stop();
             TimeSpan elapsedTime = stopwatch.Elapsed;
-
-            if (one.Score() < 100)
-                Console.WriteLine(i + "/" + LIMIT + " Score: " + one.Score() + " Time: " + elapsedTime);
+            i += one.GetFMPasses();
+            if (debug)
+                Console.WriteLine((i + 1) + "/" + LIMIT + " Score: " + one.Score() + " Time: " + elapsedTime);
 
             if (one.Score() < best.Score())
             {
@@ -85,23 +116,42 @@ public class Program()
     // TODO: Implement the Iterated Local Search algorithm
     // we are missing an exiting condition and an explanation
     // on how the solution is mutated
-    public static Solution IteratedLocalSearch(Graph graph, bool debug = false, bool deep_debug = false)
+    public static Solution IteratedLocalSearch(Graph graph, int LIMIT = 10000, int permutaton_degree = 2, bool debug = false, bool deep_debug = false)
     {
         Solution local = FiduacciaMattheysesHeuristic.FiduacciaMattheyses(graph, debug && deep_debug);
+        int fm_passes = local.GetFMPasses();
+        Console.WriteLine($"Score: {local.Score()} FM Passes: {local.GetFMPasses()}/{LIMIT}");
+        Solution best = local.Clone();
+        int better_scores = 0;
+        int runs = 0;
 
         do
         {
-            Solution mutated = Mutate(local, debug && deep_debug);
+            Solution mutated = Mutate(local, permutaton_degree, debug && deep_debug);
 
             mutated = FiduacciaMattheysesHeuristic.FiduacciaMattheyses(mutated, graph, debug && deep_debug);
+            fm_passes += mutated.GetFMPasses();
+
+            Console.WriteLine($"Score: {mutated.Score()} FM Passes: {fm_passes}/{LIMIT}");
 
             if (mutated.Score() < local.Score())
             {
                 local = mutated.Clone();
+                better_scores++;
             }
-        } while (true);
 
-        return local;
+
+            if (local.Score() < best.Score())
+            {
+                best = local.Clone();
+            }
+            runs++;
+        } while (fm_passes < LIMIT);
+
+        if (debug)
+            Console.WriteLine("Best: " + best.ToString() + " Score: " + best.Score() + " Improvement: " + better_scores + " Runs: " + runs);
+
+        return best;
     }
 
     public static void Main(string[] args)
@@ -116,8 +166,9 @@ public class Program()
         }
 
         Graph graph = new Graph(vertices);
-        Console.WriteLine(graph.ToString());
-        Solution solution = MultistartLocalSearch(graph, LIMIT: 10000, debug: false, deep_debug: false);
+        // Solution solution = MultistartLocalSearch(graph, LIMIT: 10000, debug: true, deep_debug: false);
+        Solution solution = IteratedLocalSearch(graph, 100, 80, debug: true, deep_debug: false);
+
 
     }
 }
