@@ -78,6 +78,7 @@ namespace genetic_algorithm_graph_partitioning
             Solution best_solution = parent.Clone();
             do
             {
+                parent = best_solution.Clone();
                 int array_size = 2 * g.GetMaxDegree() + 1;
                 int active_score = g.ScoreBiPartition(parent);
                 int BestScore = active_score;
