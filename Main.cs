@@ -116,8 +116,10 @@ public class Program()
         }
 
         Graph graph = new Graph(vertices);
-        Console.WriteLine(graph.ToString());
-        Solution solution = MultistartLocalSearch(graph, LIMIT: 10000, debug: true, deep_debug: false);
+        Solution solution = MultistartLocalSearch(graph, LIMIT: 100, debug: true, deep_debug: false);
+        // FiduacciaMattheysesHeuristic.FiduacciaMattheyses(new Solution([0, 0, 1, 0, 1, 1]), graph, debug: true);
+        // FiduacciaMattheysesHeuristic.FiduacciaMattheyses(new Solution([0, 1, 0, 0, 1, 1]), graph, debug: true);
+        // FiduacciaMattheysesHeuristic.FiduacciaMattheyses(new Solution([1, 0, 0, 0, 1, 1]), graph, debug: true);
 
     }
 }
