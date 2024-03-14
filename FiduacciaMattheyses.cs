@@ -72,7 +72,7 @@ namespace genetic_algorithm_graph_partitioning
             Random random = new();
             const int SAME_PARTITION_OFFSET = +2;
             const int DIFFERENT_PARTITION_OFFSET = -2;
-            int FM_PASS_COUNTER = 0;
+            int FM_PASS_COUNTER = 1;
 
             Solution working = parent.Clone();
             do
@@ -116,6 +116,7 @@ namespace genetic_algorithm_graph_partitioning
 
                 if (changes <= 0)
                 {
+                    parent.SetFMPasses(FM_PASS_COUNTER);
                     return parent;
                 }
 
@@ -287,9 +288,10 @@ namespace genetic_algorithm_graph_partitioning
                 if (working.IsValid(array_size))
                     throw new ValidationException("The solution is not valid");
 
-                FM_PASS_COUNTER++;
+
             } while (parent.Score() < working.Score());
 
+            FM_PASS_COUNTER++;
             working.SetFMPasses(FM_PASS_COUNTER);
 
             return working;
