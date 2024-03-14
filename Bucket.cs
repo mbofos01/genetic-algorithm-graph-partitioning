@@ -72,7 +72,10 @@ public class Bucket
                 x.SetNext(null);
                 x.SetPrevious(last_of_gain);
 
-                last_of_gain.SetNext(x);
+                if (last_of_gain != null)
+                {
+                    last_of_gain.SetNext(x);
+                }
                 last_pointer[index] = x;
             }
         }
@@ -181,22 +184,25 @@ public class Bucket
     public int GetMaxActiveDegree()
     {
         int spot = -1;
-        for (int i = 0; i < bucket.Length; i++)
+        if (bucket != null)
         {
-            if (bucket[i] == true)
-                spot = i;
+            for (int i = 0; i < bucket.Length; i++)
+            {
+                if (bucket[i] == true)
+                    spot = i;
+            }
         }
         return spot;
     }
 
     public Vertex GetFirstVertex(int pointer)
     {
-        if (first_pointer[pointer] == null)
+        if (first_pointer == null || first_pointer[pointer] == null)
         {
             throw new Exception("First pointer is null");
         }
 
-        return first_pointer[pointer];
+        return first_pointer[pointer]!;
     }
 
     // public static void Main(string[] args)
