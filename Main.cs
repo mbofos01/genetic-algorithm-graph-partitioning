@@ -157,7 +157,7 @@ public class Program()
 
     public static void Main(string[] args)
     {
-        string filePath = "../../../Graph5.txt"; // Update the file path accordingly
+        string filePath = "../../../Graph500.txt"; // Update the file path accordingly
         List<Vertex> vertices = FileReader.ReadGraphFromFile(filePath);
 
         if (vertices.Count == 0)

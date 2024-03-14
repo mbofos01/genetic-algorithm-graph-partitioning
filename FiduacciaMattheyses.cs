@@ -276,7 +276,7 @@ namespace genetic_algorithm_graph_partitioning
                     throw new ValidationException("The solution is not valid");
 
 
-            } while (parent.Score() < best_solution.Score());
+            } while (parent.Score() > best_solution.Score());
 
             FM_PASS_COUNTER++;
             best_solution.SetFMPasses(FM_PASS_COUNTER);
