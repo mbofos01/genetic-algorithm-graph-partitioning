@@ -79,19 +79,13 @@ namespace genetic_algorithm_graph_partitioning
             do
             {
                 parent = best_solution.Clone();
+                working = parent.Clone();
+
                 int array_size = 2 * g.GetMaxDegree() + 1;
-                int active_score = g.ScoreBiPartition(parent);
-                int BestScore = active_score;
-                int changes = 0;
-                parent.SetScore(active_score);
+                int changes_made_in_this_search = 0;
+                parent.SetScore(g.ScoreBiPartition(parent));
 
                 Queue<Pair> Changes = new Queue<Pair>();
-
-                if (debug)
-                    Console.WriteLine($"Starting with {parent.ToString()} Score: {BestScore}");
-
-
-
                 List<Vertex> vertices = g.GetVertices();
 
                 Bucket A = new(g.GetMaxDegree());
@@ -108,7 +102,7 @@ namespace genetic_algorithm_graph_partitioning
                     // Keep in mind that we use the inverse of the current team
                     // 0 is team A and 1 is team B
                     v.SetGain(parent.Score() - child_score);
-                    changes += v.GetGain();
+                    changes_made_in_this_search += v.GetGain();
                     if (child.GetPartitioning()[v.id - 1] == 1)
                         A.AddToBucket(v, v.GetGain(), random);
                     else
@@ -116,7 +110,7 @@ namespace genetic_algorithm_graph_partitioning
                     // arrays are filled with the vertices that can be moved
                 }
 
-                if (changes <= 0)
+                if (changes_made_in_this_search <= 0)
                 {
                     parent.SetFMPasses(FM_PASS_COUNTER);
                     return parent;
@@ -235,18 +229,7 @@ namespace genetic_algorithm_graph_partitioning
                         }
 
                         to_be_locked.SetFree(false);
-
                         working.SwitchPartitioning(to_be_locked.id - 1);
-
-                        if (debug)
-                            Console.WriteLine($"Vertex {to_be_locked.id} scored {active_score - to_be_locked.GetGain()} and is now locked");
-                        active_score -= to_be_locked.GetGain();
-
-                        if (active_score <= BestScore && working.IsValid())
-                        {
-                            BestScore = active_score;
-                        }
-                        // Changes.Push(new Pair(to_be_locked.id, active_score, working.IsValid()));
                         Changes.Enqueue(new Pair(to_be_locked.id, to_be_locked.GetGain(), working.IsValid()));
 
                     }
