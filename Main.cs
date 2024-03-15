@@ -56,12 +56,13 @@ public class Program()
         return distance;
     }
 
-    public static Solution Recombination(Solution one, Solution two)
+    public static Solution Recombination(Solution one, Solution two, bool debug = false)
     {
         Solution clone_one = one.Clone();
         Solution clone_two = two.Clone();
         Random r = new Random();
-        Console.WriteLine("Recombination: " + clone_one.ToString() + " + " + clone_two.ToString());
+        if (debug)
+            Console.WriteLine("Recombination: " + clone_one.ToString() + " + " + clone_two.ToString());
 
         if (HammingDistance(clone_one, clone_two) > clone_one.GetPartitioning().Length / 2)
             for (int i = 0; i < clone_two.GetPartitioning().Length; i++)
@@ -81,7 +82,10 @@ public class Program()
         } while (child_p.Count(n => n == 0) != child_p.Count(n => n == 1));
 
         Solution child = new Solution(child_p);
-        Console.WriteLine("Recombination: " + clone_one.ToString() + " + " + clone_two.ToString() + " child:" + child.ToString());
+
+        if (debug)
+            Console.WriteLine("Recombination: " + clone_one.ToString() + " + " + clone_two.ToString() + " child:" + child.ToString());
+
         return new Solution(child_p);
     }
 
@@ -155,9 +159,70 @@ public class Program()
         return best;
     }
 
+    /// <summary>
+    /// Genetic local searchapplies selection and recombination to a population of  
+    /// localoptimal solutions obtained by a local search algorithm, in this case the FM 
+    /// heuristic. After applying recombination, the offspring is optimized with local search 
+    /// to becomea new local  optimum. The solutions in the population of GLS  
+    /// are thus all localoptimal solutions. Selection focuses the search towards good 
+    /// regions in the searchspace, while recombining local optima generates good starting 
+    /// points for the localsearch algorithm (= FM) in order to find new local optima
+    /// </summary>
+    /// <param name="graph"></param>
+    /// <returns></returns> <summary>
+    public static Solution GeneticLocalSearch(Graph graph, int population = 50, int LIMIT = 10000, bool debug = false, bool deep_debug = false)
+    {
+        List<Solution> solutions = new List<Solution>();
+        Solution? last_solution;
+        Random picker = new();
+        int father = -1;
+        int mother = -1;
+        int fm_passes = 0;
+
+        for (int i = 0; i < population; i++)
+        {
+            // Genearate a random local optimal solutions
+            solutions.Add(FiduacciaMattheysesHeuristic.FiduacciaMattheyses(graph, debug && deep_debug));
+        }
+        solutions.Sort((x, y) => x.Score().CompareTo(y.Score()));
+        do
+        {
+            do
+            {
+                father = picker.Next(0, population);
+                mother = picker.Next(0, population);
+
+            } while (father == mother);
+
+            Solution child = Recombination(solutions[father], solutions[mother]);
+            // optimize the child
+            child = FiduacciaMattheysesHeuristic.FiduacciaMattheyses(child, graph);
+            fm_passes += child.GetFMPasses();
+
+            if (debug)
+                Console.WriteLine($"Score: {child.Score()} FM Passes: {fm_passes}/{LIMIT}");
+
+
+            // compare child with the worst solution in the population
+            last_solution = solutions.Last();
+
+            if (child.Score() <= last_solution.Score())
+            {
+                solutions.Remove(last_solution);
+                solutions.Add(child);
+            }
+            solutions.Sort((x, y) => x.Score().CompareTo(y.Score()));
+
+        } while (fm_passes < LIMIT);
+
+        if (debug)
+            Console.WriteLine("Best: " + solutions.First().ToString() + " Score: " + solutions.First().Score());
+
+        return solutions.First();
+    }
     public static void Main(string[] args)
     {
-        string filePath = "../../../Graph500.txt"; // Update the file path accordingly
+        string filePath = "../../../Graph5.txt"; // Update the file path accordingly
         List<Vertex> vertices = FileReader.ReadGraphFromFile(filePath);
 
         if (vertices.Count == 0)
@@ -167,10 +232,12 @@ public class Program()
         }
 
         Graph graph = new Graph(vertices);
-        Solution solution = MultistartLocalSearch(graph, LIMIT: 10000, debug: true, deep_debug: false);
+        // Solution solution = MultistartLocalSearch(graph, LIMIT: 10000, debug: true, deep_debug: false);
         // Solution s = FiduacciaMattheysesHeuristic.FiduacciaMattheyses(new Solution([1, 0, 1, 0, 1, 0]), graph, debug: true);
         // Console.WriteLine($"Local Best: {s.ToString()} Score: {s.Score()}");
         // Solution solution = IteratedLocalSearch(graph, 100, 80, debug: true, deep_debug: false);
+
+        Solution solution = GeneticLocalSearch(graph, 10, debug: true);
 
 
     }
