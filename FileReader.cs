@@ -22,12 +22,23 @@ public class FileReader
                 while (!sr.EndOfStream)
                 {
                     string? line = sr.ReadLine();
+
+                    if (line == null)
+                    {
+                        throw new Exception("Something went wrong with reading the file. Exiting..");
+                    }
+
                     string[] parts = line.Split(' ');
 
                     int index = 0;
                     while (parts?[index] == "")
                     {
                         index++;
+                    }
+
+                    if (parts == null)
+                    {
+                        throw new Exception("Something went wrong with reading the file. Exiting..");
                     }
 
                     int id = int.Parse(parts[index]);
