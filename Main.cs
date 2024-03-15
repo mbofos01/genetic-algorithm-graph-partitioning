@@ -6,6 +6,14 @@ using System.Data;
 
 public class Program()
 {
+    /// <summary>
+    /// Mutates a solution.
+    /// </summary>
+    /// 
+    /// <param name="one">The solution to mutate.</param>
+    /// <param name="how_many">The number of mutations.</param>
+    /// <param name="debug">Debug flag.</param>
+    /// <returns> The mutated solution</returns>
     public static Solution Mutate(Solution one, int how_many, bool debug = false)
     {
         Random random = new Random();
@@ -40,6 +48,14 @@ public class Program()
 
         return one;
     }
+
+    /// <summary>
+    /// Calculates the Hamming distance between two solutions.
+    /// </summary>
+    /// 
+    /// <param name="one">The first solution.</param>
+    /// <param name="two">The second solution.</param>
+    /// <returns> The Hamming distance between the two solutions</returns>
     public static int HammingDistance(Solution one, Solution two)
     {
         int distance = 0;
@@ -56,6 +72,14 @@ public class Program()
         return distance;
     }
 
+    /// <summary>
+    /// Recombines two solutions.
+    /// </summary>
+    /// 
+    /// <param name="one">The first solution.</param>
+    /// <param name="two">The second solution.</param>
+    /// <param name="debug">Debug flag.</param>
+    /// <returns> The recombined solution</returns> 
     public static Solution Recombination(Solution one, Solution two, bool debug = false)
     {
         Solution clone_one = one.Clone();
@@ -89,6 +113,15 @@ public class Program()
         return new Solution(child_p);
     }
 
+    /// <summary>
+    /// Multistart local search algorithm.
+    /// </summary>
+    ///
+    /// <param name="graph">Graph to partition.</param>
+    /// <param name="LIMIT">Limit of FM passes (default=10000).</param>
+    /// <param name="debug">Debug flag.</param>
+    /// <param name="deep_debug">Deep debug flag.</param>
+    /// <returns> The best solution found by the multistart local search algorithm</returns>  
     public static Solution MultistartLocalSearch(Graph graph, int LIMIT = 10000, bool debug = false, bool deep_debug = false)
     {
         Solution one;
@@ -118,9 +151,16 @@ public class Program()
         return best;
     }
 
-    // TODO: Implement the Iterated Local Search algorithm
-    // we are missing an exiting condition and an explanation
-    // on how the solution is mutated
+    /// <summary>
+    /// Iterated local search algorithm.
+    /// </summary>
+    /// 
+    /// <param name="graph">Graph to partition.</param>
+    /// <param name="LIMIT">Limit of FM passes (default=10000).</param>
+    /// <param name="permutaton_degree">Degree of permutation (default=2).</param>
+    /// <param name="debug">Debug flag.</param>
+    /// <param name="deep_debug">Deep debug flag.</param>
+    /// <returns> The best solution found by the iterated local search algorithm</returns>
     public static Solution IteratedLocalSearch(Graph graph, int LIMIT = 10000, int permutaton_degree = 2, bool debug = false, bool deep_debug = false)
     {
         Solution local = FiduacciaMattheysesHeuristic.FiduacciaMattheyses(graph, debug && deep_debug);
@@ -160,16 +200,14 @@ public class Program()
     }
 
     /// <summary>
-    /// Genetic local searchapplies selection and recombination to a population of  
-    /// localoptimal solutions obtained by a local search algorithm, in this case the FM 
-    /// heuristic. After applying recombination, the offspring is optimized with local search 
-    /// to becomea new local  optimum. The solutions in the population of GLS  
-    /// are thus all localoptimal solutions. Selection focuses the search towards good 
-    /// regions in the searchspace, while recombining local optima generates good starting 
-    /// points for the localsearch algorithm (= FM) in order to find new local optima
+    /// Genetic local search algorithm.
     /// </summary>
-    /// <param name="graph"></param>
-    /// <returns></returns> <summary>
+    /// 
+    /// <param name="graph">Graph to partition.</param>
+    /// <param name="population">Population size (default=50).</param>
+    /// <param name="LIMIT">Limit of FM passes (default=10000).</param>
+    /// <param name="debug">Debug flag.</param>
+    /// <returns> The best solution found by the genetic local search algorithm</returns>
     public static Solution GeneticLocalSearch(Graph graph, int population = 50, int LIMIT = 10000, bool debug = false, bool deep_debug = false)
     {
         List<Solution> solutions = new List<Solution>();

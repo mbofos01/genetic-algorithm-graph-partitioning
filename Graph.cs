@@ -14,7 +14,9 @@ public class Graph
     /// Gets or sets the list of vertices in the graph.
     /// </summary>
     public List<Vertex> vertices;
-
+    /// <summary>
+    /// The maximum degree of the graph.
+    /// </summary> 
     public int max_degree;
 
     /// <summary>
@@ -27,6 +29,11 @@ public class Graph
         max_degree = 0;
     }
 
+    /// <summary>
+    /// Gets the list of vertices in the graph.
+    /// </summary>
+    /// 
+    /// <returns>The list of vertices in the graph.</returns>
     public List<Vertex> GetVertices()
     {
         return vertices;
@@ -35,6 +42,7 @@ public class Graph
     /// <summary>
     /// Returns a string representation of the graph.
     /// </summary>
+    /// 
     /// <returns>A string representation of the graph.</returns>
     public override string ToString()
     {
@@ -46,6 +54,12 @@ public class Graph
         return result;
     }
 
+    /// <summary>
+    /// Scores the bi-partition of the graph.
+    /// </summary>
+    /// 
+    /// <param name="partition">The partition of the graph.</param>
+    /// <returns>The score in bi-partitioning</returns>//  
     public int ScoreBiPartition(int[] partition)
     {
         int score = 0;
@@ -66,34 +80,11 @@ public class Graph
         return score / 2;
     }
 
-    public static void Main1(String[] args)
-    {
-        string filePath = "../../../Graph1.txt"; // Update the file path accordingly
-        List<Vertex> vertices = FileReader.ReadGraphFromFile(filePath);
-
-        if (vertices.Count == 0)
-        {
-            Console.WriteLine("No vertices found in the file");
-            return;
-        }
-
-        Graph graph = new Graph(vertices);
-        Solution sol = new Solution([0, 1, 1, 0]);
-        Console.WriteLine(graph.ScoreBiPartition(sol));
-        // sol = new Solution([1, 1, 1, 1]);
-        // Console.WriteLine(graph.ScoreBiPartition(sol));
-        // sol = new Solution([0, 0, 0, 0]);
-        // Console.WriteLine(graph.ScoreBiPartition(sol));
-        // sol = new Solution([1, 0, 1, 0]);
-        // Console.WriteLine(graph.ScoreBiPartition(sol));
-        // sol = new Solution([0, 1, 0, 1]);
-        // Console.WriteLine(graph.ScoreBiPartition(sol));
-        // sol = new Solution([1, 0, 1, 0]);
-        // Console.WriteLine(graph.ScoreBiPartition(sol));
-        // sol = new Solution([1, 1, 0, 1]);
-        // Console.WriteLine(graph.ScoreBiPartition(sol));
-    }
-
+    /// <summary>
+    /// Gets the maximum degree of the graph.
+    /// </summary>
+    /// 
+    /// <returns>Max degree of the graph</returns>
     public int GetMaxDegree()
     {
         if (max_degree != 0)
@@ -112,10 +103,14 @@ public class Graph
         return max;
     }
 
+    /// <summary>
+    /// Scores the bi-partition of the graph.
+    /// </summary>
+    /// 
+    /// <param name="sol">The solution to score.</param>
+    /// <returns>The score in bi-partitioning</returns>
     public int ScoreBiPartition(Solution sol)
     {
         return ScoreBiPartition(sol.GetPartitioning());
     }
 }
-
-// 1 (0.502987,0.528829)    8    28 102 162 233 360 393 460 500

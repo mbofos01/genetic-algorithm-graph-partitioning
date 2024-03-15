@@ -1,7 +1,15 @@
 namespace genetic_algorithm_graph_partitioning;
 
+/// <summary>
+/// Simple class to read a graph from a file.
+/// </summary>
 public class FileReader
 {
+    /// <summary>
+    /// Reads a graph from a file and returns a list of vertices.
+    /// </summary>
+    /// <param name="filePath">The path to the file.</param>
+    /// <returns>List of vertices</returns>//  
     public static List<Vertex> ReadGraphFromFile(string filePath)
     {
         List<Vertex> vertices = new List<Vertex>();

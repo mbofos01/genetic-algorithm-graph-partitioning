@@ -1,14 +1,36 @@
 namespace genetic_algorithm_graph_partitioning;
 
+
+/// <summary>
+/// Represents a bucket used in the genetic algorithm graph partitioning.
+/// </summary>
 public class Bucket
 {
+    /// <summary>
+    /// Flag array to indicate if the bucket is empty or not.
+    /// </summary> 
     public bool[]? bucket;
+    /// <summary>
+    /// Array of pointers to the first vertex in the bucket.
+    /// </summary>
     public Vertex?[]? first_pointer;
+    /// <summary>
+    /// Array of pointers to the last vertex in the bucket.
+    /// </summary>
     public Vertex?[]? last_pointer;
+    /// <summary>
+    /// The maximum degree of the bucket. ~> Size: 2 * max_degree + 1
+    /// </summary> 
     public int max_degree;
-
+    /// <summary>
+    /// The population count of the bucket.
+    /// </summary>
     public int population;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Bucket"/> class with the specified maximum degree.
+    /// </summary>
+    /// <param name="max_d">The maximum degree.</param>
     public Bucket(int max_d)
     {
         max_degree = max_d;
@@ -21,7 +43,6 @@ public class Bucket
     /// <summary>
     /// Helper function to calculate the index of the array.
     /// </summary>
-    /// 
     /// <param name="gain">The gain of the current solution.</param>
     /// <returns>The index of the array.</returns> 
     public int CalculateIndex(int gain)
@@ -29,6 +50,12 @@ public class Bucket
         return gain + max_degree;
     }
 
+    /// <summary>
+    /// Adds a vertex to the bucket with the specified gain.
+    /// </summary>
+    /// <param name="x">The vertex to add.</param>
+    /// <param name="gain">The gain of the vertex.</param>
+    /// <param name="rnd">The random number generator.</param>
     public void AddToBucket(Vertex x, int gain, Random rnd)
     {
         population++;
@@ -81,6 +108,11 @@ public class Bucket
         }
 
     }
+
+    /// <summary>
+    /// Removes a vertex from the bucket in constant time.
+    /// </summary>
+    /// <param name="x">The vertex to remove.</param>
     public void RemoveFromBucket(Vertex x)
     {
         Vertex? previous = x.GetPrevious();
@@ -153,6 +185,9 @@ public class Bucket
         }
     }
 
+    /// <summary>
+    /// Prints the contents of the bucket.
+    /// </summary>
     public void PrintBucket()
     {
         for (int i = -max_degree; i <= max_degree; i++)
@@ -163,7 +198,7 @@ public class Bucket
             else
                 Console.Write("Bucket  " + i + " : ");
 
-            if (bucket[index] == true)
+            if (bucket != null && first_pointer != null && bucket[index] == true)
             {
                 Vertex? current = first_pointer[index];
                 while (current != null)
@@ -176,11 +211,19 @@ public class Bucket
         }
     }
 
+    /// <summary>
+    /// Gets the population count of the bucket.
+    /// </summary>
+    /// <returns>The population count.</returns>
     public int GetPopulation()
     {
         return population;
     }
 
+    /// <summary>
+    /// Gets the maximum active degree in the bucket.
+    /// </summary>
+    /// <returns>The maximum active degree.</returns>
     public int GetMaxActiveDegree()
     {
         int spot = -1;
@@ -195,6 +238,11 @@ public class Bucket
         return spot;
     }
 
+    /// <summary>
+    /// Gets the first vertex in the specified pointer of the bucket.
+    /// </summary>
+    /// <param name="pointer">The pointer index.</param>
+    /// <returns>The first vertex in the pointer.</returns>
     public Vertex GetFirstVertex(int pointer)
     {
         if (first_pointer == null || first_pointer[pointer] == null)
@@ -204,37 +252,5 @@ public class Bucket
 
         return first_pointer[pointer]!;
     }
-
-    // public static void Main(string[] args)
-    // {
-    //     int max_degree = 3;
-    //     Bucket A = new Bucket(max_degree);
-    //     Bucket B = new Bucket(max_degree);
-
-    //     Vertex v1 = new Vertex(1, new int[] { 2, 3, 4 });
-    //     Vertex v2 = new Vertex(2, new int[] { 1, 3, 4 });
-    //     Vertex v3 = new Vertex(3, new int[] { 1, 2, 4 });
-    //     Vertex v4 = new Vertex(4, new int[] { 1, 2, 4 });
-    //     v1.SetGain(1);
-    //     v2.SetGain(1);
-    //     v3.SetGain(3);
-    //     v4.SetGain(3);
-
-    //     Random rnd = new Random();
-
-    //     A.AddToBucket(v1, 1, rnd);
-    //     A.AddToBucket(v2, 1, rnd);
-    //     A.RemoveFromBucket(v2);
-    //     A.RemoveFromBucket(v1);
-    //     B.AddToBucket(v3, 3, rnd);
-    //     B.AddToBucket(v4, 3, rnd);
-
-    //     Console.WriteLine(A.GetFirstVertex(A.GetMaxActiveDegree()));
-
-
-
-
-    // }
-
 
 }

@@ -5,12 +5,31 @@ using System.Diagnostics;
 namespace genetic_algorithm_graph_partitioning
 {
 
+    /// <summary>
+    /// Helper class to represent a chunk of data used for the Fiduaccia Mattheyses heuristic.
+    /// </summary>
     public class Pair
     {
+        /// <summary>
+        /// Vertex id.
+        /// </summary>
         public int vertex;
+        /// <summary>
+        /// Offset value of moving the vertex.
+        /// </summary>
         public int value;
-
+        /// <summary>
+        /// Whether the solution is valid.
+        /// </summary>
         public bool valid;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Pair"/> class with the specified vertex, value and validity.
+        /// </summary>
+        /// 
+        /// <param name="vertex">The vertex id</param>
+        /// <param name="value">The vertex value</param>
+        /// <param name="valid">Validity of vertex</param>
         public Pair(int vertex, int value, bool valid)
         {
             this.vertex = vertex;
@@ -19,25 +38,18 @@ namespace genetic_algorithm_graph_partitioning
         }
     }
 
+
+    /// <summary>
+    /// Represents a solution for the graph partitioning problem using the Fiduaccia Mattheyses heuristic.  <a href="https://www.youtube.com/watch?v=CKdc5Ej2jSE">Youtube Video</a> 
+    /// </summary>
     public class FiduacciaMattheysesHeuristic
     {
         /// <summary>
-        /// Helper function to calculate the index of the array.
+        /// Helper function to print the buckets.
         /// </summary>
         /// 
-        /// <param name="score">The score of the current solution.</param>
-        /// <param name="max_degree">The maximum degree of the graph.</param>
-        /// <returns>The index of the array.</returns> 
-        public static int CalculateIndex(int score, int max_degree)
-        {
-            return score + (max_degree / 2);
-        }
-
-        public static int DeCalculateIndex(int index, int max_degree)
-        {
-            return index - (max_degree / 2);
-        }
-
+        /// <param name="A">The first bucket.</param>
+        /// <param name="B">The second bucket.</param>
         public static void ViewBuckets(Bucket A, Bucket B)
         {
             Console.WriteLine("------------------------------ ");

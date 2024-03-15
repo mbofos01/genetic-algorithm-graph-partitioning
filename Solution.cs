@@ -7,10 +7,25 @@ using System;
 /// </summary>
 public class Solution
 {
+    /// <summary>
+    /// Partitioning of the graph.
+    /// </summary>
     private int[]? partitioning;
+    /// <summary>
+    /// The number of partitions.
+    /// </summary>
     private int partion_count;
+    /// <summary>
+    /// The score of the partitioning.
+    /// </summary> 
     private int score;
+    /// <summary>
+    /// The number of passes in the Fiduccia-Mattheyses algorithm.
+    /// </summary>
     private int fm_passes;
+    /// <summary>
+    /// Random number generator.
+    /// </summary> 
     private static Random rnd = new Random();
 
     /// <summary>
@@ -60,6 +75,13 @@ public class Solution
         }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Solution"/> class with a given partitioning and score.
+    /// </summary>
+    /// 
+    /// <param name="partitioning">The initial partitioning.</param>
+    /// <param name="partions">The number of partitions (default is 2).</param>
+    /// <param name="score">The score of the partitioning.</param>
     public Solution(int[] partitioning, int partions, int score)
     {
         this.partion_count = partions;
@@ -104,17 +126,32 @@ public class Solution
             this.partitioning[index] = value;
     }
 
+    /// <summary>
+    /// Switches the value of a specific index in the partitioning.
+    /// </summary>
+    /// 
+    /// <param name="index">The index to switch.</param>
     public void SwitchPartitioning(int index)
     {
         if (partitioning != null)
             this.partitioning[index] = (this.partitioning[index] + 1) % partion_count;
     }
 
+    /// <summary>
+    /// Overrides the ToString method.
+    /// </summary>
+    /// 
+    /// <returns>A string representation of the partitioning.</returns>
     public override string ToString()
     {
         return string.Join(" ", partitioning ?? new int[0]);
     }
 
+    /// <summary>
+    /// Overrides the Clone method.
+    /// </summary>
+    /// 
+    /// <returns>A clone of a solution object</returns>
     public Solution Clone()
     {
         if (partitioning == null)
@@ -123,7 +160,12 @@ public class Solution
         return new Solution(partitioning, partion_count, score);
     }
 
-
+    /// <summary>
+    /// Checks the validity of a solution.
+    /// </summary>
+    /// 
+    /// <param name="groups">The number of groups to check for validity (default is 2).</param>
+    /// <returns>True if the solution is valid, false otherwise.</returns>
     public bool IsValid(int groups = 2)
     {
         if (partitioning == null)
@@ -145,21 +187,41 @@ public class Solution
         return true;
     }
 
+    /// <summary>
+    /// Returns the score of the solution.
+    /// </summary>
+    /// 
+    /// <returns>The score of the solution.</returns>
     public int Score()
     {
         return score;
     }
 
+    /// <summary>
+    /// Sets the score of the solution.
+    /// </summary>
+    ///  
+    /// <param name="score">Score to set.</param>
     public void SetScore(int score)
     {
         this.score = score;
     }
 
+    /// <summary>
+    /// Sets the Fiduccia-Mattheyses passes.
+    /// </summary>
+    /// 
+    /// <param name="passes">The number of passes.</param>
     public void SetFMPasses(int passes)
     {
         this.fm_passes = passes;
     }
 
+    /// <summary>
+    /// Gets the Fiduccia-Mattheyses passes.
+    /// </summary>
+    /// 
+    /// <returns>The number of passes.</returns>
     public int GetFMPasses()
     {
         return fm_passes;
