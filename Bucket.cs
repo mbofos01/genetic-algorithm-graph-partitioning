@@ -60,7 +60,7 @@ public class Bucket
     {
         population++;
         int index = CalculateIndex(gain);
-        int order = 0;// rnd.Next(2);
+        int order = rnd.Next(2);
 
         if (bucket == null || first_pointer == null || last_pointer == null)
         {
