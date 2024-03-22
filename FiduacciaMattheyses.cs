@@ -106,6 +106,8 @@ namespace genetic_algorithm_graph_partitioning
 
             do
             {
+                FM_PASS_COUNTER++;
+
                 parent = best_solution.Clone();
                 working = parent.Clone();
 
@@ -151,8 +153,6 @@ namespace genetic_algorithm_graph_partitioning
                     return parent;
                 }
 
-                // We count FM pass as valid iff there are possible improvements
-                FM_PASS_COUNTER++;
 
                 while (vertices.Any(v => v.GetFree()))
                 {
