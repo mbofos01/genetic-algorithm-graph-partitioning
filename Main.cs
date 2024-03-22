@@ -260,7 +260,7 @@ public class Program()
     }
     public static void Main(string[] args)
     {
-        string filePath = "../../../Graph5.txt"; // Update the file path accordingly
+        string filePath = "../../../Graph500.txt"; // Update the file path accordingly
         List<Vertex> vertices = FileReader.ReadGraphFromFile(filePath);
 
         if (vertices.Count == 0)
@@ -273,7 +273,7 @@ public class Program()
         // Solution solution = MultistartLocalSearch(graph, LIMIT: 10000, debug: true, deep_debug: false);
         // Solution s = FiduacciaMattheysesHeuristic.FiduacciaMattheyses(new Solution([1, 0, 1, 0, 1, 0]), graph, debug: true);
         // Console.WriteLine($"Local Best: {s.ToString()} Score: {s.Score()}");
-        // Solution solution = IteratedLocalSearch(graph, 100, 80, debug: true, deep_debug: false);
+        // Solution solution = IteratedLocalSearch(graph, 10000, permutaton_degree: 2, debug: true, deep_debug: false);
 
         Solution solution = GeneticLocalSearch(graph, 10, debug: true);
 

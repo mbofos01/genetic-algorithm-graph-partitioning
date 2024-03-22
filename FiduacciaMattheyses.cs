@@ -96,6 +96,7 @@ namespace genetic_algorithm_graph_partitioning
             int FM_PASS_COUNTER = 0;
             int max_degree = g.GetMaxDegree();
             int array_size = 2 * max_degree + 1;
+            int PREVIOUS_SCORE;
 
             Random random = new();
             Solution working = parent.Clone();
@@ -109,6 +110,7 @@ namespace genetic_algorithm_graph_partitioning
                 FM_PASS_COUNTER++;
 
                 parent = best_solution.Clone();
+                PREVIOUS_SCORE = parent.Score();
                 working = parent.Clone();
 
                 int changes_made_in_this_search = 0;
@@ -130,29 +132,18 @@ namespace genetic_algorithm_graph_partitioning
                     // Keep in mind that we use the inverse of the current team
                     // 0 is team A and 1 is team B
                     v.SetGain(parent.Score() - child_score);
-                    changes_made_in_this_search += v.GetGain();
+
+                    if (v.GetGain() <= 0)
+                    {
+                        changes_made_in_this_search += 1;
+                    }
+
                     if (child.GetPartitioning()[v.id - 1] == 1)
                         A.AddToBucket(v, v.GetGain(), random);
                     else
                         B.AddToBucket(v, v.GetGain(), random);
                     // arrays are filled with the vertices that can be moved
                 }
-
-                // if there is no improvement we stop the fm pass ~ we have reached a local optimum
-                if (changes_made_in_this_search <= 0)
-                {
-                    // it is important to clean the vertices before returning the solution
-                    // if we don't do this, the next call to the function will have the vertices
-                    // attached to the linked list creating a havoc
-                    CleanVertices(vertices);
-
-                    if (parent.IsValid(array_size))
-                        throw new ValidationException("The solution is not valid");
-
-                    parent.SetFMPasses(FM_PASS_COUNTER);
-                    return parent;
-                }
-
 
                 while (vertices.Any(v => v.GetFree()))
                 {
@@ -358,7 +349,18 @@ namespace genetic_algorithm_graph_partitioning
                 if (best_solution.IsValid(array_size))
                     throw new ValidationException("The solution is not valid");
 
-            } while (true);
+            } while (best_solution.Score() < PREVIOUS_SCORE);
+
+            // it is important to clean the vertices before returning the solution
+            // if we don't do this, the next call to the function will have the vertices
+            // attached to the linked list creating a havoc
+            CleanVertices(vertices);
+
+            if (parent.IsValid(array_size))
+                throw new ValidationException("The solution is not valid");
+
+            parent.SetFMPasses(FM_PASS_COUNTER);
+            return parent;
 
         }
 
