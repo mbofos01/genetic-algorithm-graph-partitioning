@@ -3,6 +3,9 @@ using System;
 using System.Reflection.Metadata;
 using System.Diagnostics;
 using System.Data;
+using System.Linq;
+using System.Drawing;
+using ScottPlot;
 
 public class Program()
 {
@@ -169,6 +172,7 @@ public class Program()
         Solution best = local.Clone();
         int better_scores = 0;
         int runs = 0;
+        int equal = 0;
 
         do
         {
@@ -185,6 +189,10 @@ public class Program()
                 better_scores++;
             }
 
+            if (mutated.Score() == local.Score())
+            {
+                equal++;
+            }
 
             if (local.Score() < best.Score())
             {
@@ -194,7 +202,7 @@ public class Program()
         } while (fm_passes < LIMIT);
 
         if (debug)
-            Console.WriteLine("Best: " + best.ToString() + " Score: " + best.Score() + " Improvement: " + better_scores + " Runs: " + runs);
+            Console.WriteLine("Best: " + best.ToString() + " Score: " + best.Score() + " Improvement: " + better_scores + " Equal: " + equal + " Runs: " + runs);
 
         return best;
     }
@@ -270,13 +278,99 @@ public class Program()
         }
 
         Graph graph = new Graph(vertices);
-        // Solution solution = MultistartLocalSearch(graph, LIMIT: 10000, debug: true, deep_debug: false);
-        // Solution s = FiduacciaMattheysesHeuristic.FiduacciaMattheyses(new Solution([1, 0, 1, 0, 1, 0]), graph, debug: true);
-        // Console.WriteLine($"Local Best: {s.ToString()} Score: {s.Score()}");
-        // Solution solution = IteratedLocalSearch(graph, 10000, permutaton_degree: 2, debug: true, deep_debug: false);
 
-        Solution solution = GeneticLocalSearch(graph, 10, debug: true);
+        int total_runs = 20;
+        int[] scores = new int[total_runs]; // save all scores
+        int[] times = new int[total_runs]; // save computational time
 
+        // 20 runs to average out for comparison
+        for(int run = 0; run < total_runs; run++)
+        {
+            var watch = Stopwatch.StartNew(); 
 
+            // ======================= uncomment whichever algorithm you want to run ========================
+            //Solution solution = MultistartLocalSearch(graph, LIMIT: 10000, debug: true, deep_debug: false);
+            // Solution s = FiduacciaMattheysesHeuristic.FiduacciaMattheyses(new Solution([1, 0, 1, 0, 1, 0]), graph, debug: true);
+            // Console.WriteLine($"Local Best: {s.ToString()} Score: {s.Score()}");
+            //Solution solution = IteratedLocalSearch(graph, 10000, permutaton_degree: 32, debug: true, deep_debug: false); // Need to save 'equal' counter and average out
+            Solution solution = GeneticLocalSearch(graph, 50, debug: true);
+
+            watch.Stop();
+            var elapsedMs = watch.ElapsedMilliseconds; // stop timer
+            scores[run] = solution.Score(); // save score
+            times[run] = Convert.ToInt32(elapsedMs);
+
+            Console.WriteLine(elapsedMs + "ms");
+        }
+
+        int best_score = scores.Min();  // best score out of all runs
+        int best_score_counter = scores.Count(n => n==best_score); // how many times the best score occured 
+        int median_score = Median(scores); 
+        int median_time = Median(times);
+        Console.WriteLine($"Best score {best_score} occured {best_score_counter}/{total_runs} times");
+        Console.WriteLine(scores);
+        Console.WriteLine(times);
+        CreateBoxPlot(scores);
+        Console.WriteLine("SCORES");
+
+        for(int run = 0; run < total_runs; run++)
+        {
+            Console.WriteLine(scores[run]);
+            Console.WriteLine("");
+        }
+        Console.WriteLine("TIMES");
+
+        for(int run = 0; run < total_runs; run++)
+        {
+            Console.WriteLine(times[run]);
+            Console.WriteLine("");
+
+        }
     }
+
+    public static int Median(int[] arr) 
+    {
+        Array.Sort(arr);
+        return arr[arr.Length / 2];
+    }
+
+ public static void CreateBoxPlot(int[] data)
+    {
+        // Calculate the box plot parameters
+        var sortedData = data.OrderBy(x => x).ToArray();
+        double median = Median(sortedData);
+        double q1 = Median(sortedData.Take(sortedData.Length / 2).ToArray());
+        double q3 = Median(sortedData.Skip((sortedData.Length + 1) / 2).ToArray());
+        double min = sortedData.First();
+        double max = sortedData.Last();
+
+        // Create a new ScottPlot plot
+        ScottPlot.Plot myPlot = new();
+
+        // Create and add the box plot
+        ScottPlot.Box box = new()
+        {
+            Position = 5, // This is the position on the x-axis
+            BoxMin = q1,
+            BoxMax = q3,
+            WhiskerMin = min,
+            WhiskerMax = max,
+            BoxMiddle = median,
+        };
+
+        myPlot.Add.Box(box);
+
+        ScottPlot.TickGenerators.NumericManual ticks = new();
+
+        // add major ticks with their labels
+        ticks.AddMajor(1, "MLS");
+        ticks.AddMajor(3, "ILS");
+        ticks.AddMajor(5, "GLS");
+
+        // tell the horizontal axis to use the custom tick genrator
+        myPlot.Axes.Bottom.TickGenerator = ticks;
+        myPlot.Axes.SetLimits(0, 6, min - 10, max + 10);        // Save the plot as an image
+        myPlot.SavePng("C:/Users/Jelle PC/Documents/SCHOOL/EC/genetic-algorithm-graph-partitioning-main/genetic-algorithm-graph-partitioning-main/GLS.png", 400, 300);
+    }
+
 }
