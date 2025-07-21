@@ -1,4 +1,5 @@
 namespace genetic_algorithm_graph_partitioning;
+
 using System;
 using System.Reflection.Metadata;
 using System.Diagnostics;
@@ -260,7 +261,7 @@ public class Program()
     }
     public static void Main(string[] args)
     {
-        string filePath = "../../../Graph500.txt"; // Update the file path accordingly
+        string filePath = "Graph5.txt"; // Update the file path accordingly
         List<Vertex> vertices = FileReader.ReadGraphFromFile(filePath);
 
         if (vertices.Count == 0)
@@ -276,6 +277,8 @@ public class Program()
         // Solution solution = IteratedLocalSearch(graph, 10000, permutaton_degree: 2, debug: true, deep_debug: false);
 
         Solution solution = GeneticLocalSearch(graph, 10, debug: true);
+        solution = IteratedLocalSearch(graph, 10, debug: true);
+        solution = MultistartLocalSearch(graph, 10, debug: true);
 
 
     }
